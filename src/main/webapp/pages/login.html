@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+<script>
+	$(document).ready(function() {
+		document.getElementById('username').focus();
+	});
+</script>
+</head>
+<body>
+	<form id="loginForm" action="../adminrest/home/echo" method="post">
+		<table>
+			<tr>
+				<td>Username:</td>
+				<td><input type="text" id="username" name="username"></td>
+			</tr>
+			<tr>
+				<td>Password:</td>
+				<td><input type="password" id="password" name="password"></td>
+			</tr>
+		</table>
+		<br /> <input type="submit" value="Submit">
+	</form>
+	<div><a href="../adminrest/home">Test REST API here</a></div>
+</body>
+</html>
