@@ -24,6 +24,7 @@ import javax.ws.rs.core.Response.Status;
 
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
+import org.glassfish.jersey.server.mvc.Viewable;
 
 @Path("/home")
 public class AdminService {
@@ -35,6 +36,14 @@ public class AdminService {
 	public Response test() {
 		return Response.ok("Hello Dude!").build();
 	}
+	
+	/* This Jersey MVC part is not working for Jersey 2.7 when using /adminrest/hello/aloha as the path name
+	@Path("/aloha")
+	@GET
+	@Produces(MediaType.TEXT_HTML)
+	public Viewable hello() {
+		return new Viewable("/index.jsp");
+	}*/
 	
 	@Path("/echo")
 	@POST

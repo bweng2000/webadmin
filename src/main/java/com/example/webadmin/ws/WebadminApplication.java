@@ -5,10 +5,10 @@ import java.util.Set;
 
 import javax.ws.rs.core.Application;
 
-
 import org.glassfish.jersey.jackson.JacksonFeature;
 import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.server.ResourceConfig;
+import org.glassfish.jersey.server.mvc.MvcFeature;
 
 
 /**
@@ -40,10 +40,14 @@ import org.glassfish.jersey.server.ResourceConfig;
  */
 public class WebadminApplication extends ResourceConfig {
 	
+	/**
+	 * The lines registering the necessary classes are very important to get correct behavior.
+	 */
 	public WebadminApplication() {
 		packages("com.example.webadmin.ws")
 		.register(JacksonFeature.class)		//This step is very important to register Jackson JSON support for Jersey.
-		.register(MultiPartFeature.class);	//This step is required to enable MULTIPART_FORM_DATA
+		.register(MultiPartFeature.class)	//This step is required to enable MULTIPART_FORM_DATA
+		.register(MvcFeature.class);
     }
 
 }
