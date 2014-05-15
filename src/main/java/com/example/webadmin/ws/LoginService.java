@@ -25,7 +25,7 @@ public class LoginService {
 	
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
-	@Produces(MediaType.APPLICATION_JSON)
+	//@Produces(MediaType.APPLICATION_JSON)
 	public Response userAuthentication(@FormParam("username") String username,
 			@FormParam("password") String password) {
 
@@ -47,7 +47,7 @@ public class LoginService {
 
 		try {
 			currentUser.login(token);
-			r = Response.ok().entity(token).build();
+			r = Response.ok().build();
 		} catch (AuthenticationException ex) {
 			errMsg = "Incorrect username or password!";
 			System.out.println(errMsg);

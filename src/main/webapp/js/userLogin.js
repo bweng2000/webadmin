@@ -5,9 +5,10 @@ $(document).ready(function() {
 			data : $("#loginForm").serialize(),
 			contentType : 'application/x-www-form-urlencoded; charset=utf-8',
 			type : "POST",
-			dataType : "json",
-			success : function(data, status, jqXHR) {
-				window.location.href = '../pages/admin/upload.html';
+			//dataType : "json",
+			//success : function(data, status, jqXHR) {
+			success : function() {	
+				window.location.href = '../pages/admin/hello.html';
 			},
 			error : function(jqXHR, status, error) {
 				alert(jqXHR.responseText);
