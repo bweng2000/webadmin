@@ -25,12 +25,19 @@ import javax.ws.rs.core.Response.Status;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.glassfish.jersey.server.mvc.Viewable;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.example.model.Music;
+import com.example.webadmin.dao.PlaylistDao;
 
 @Path("/home")
 public class AdminService {
 	
 	private static final String HOME = System.getProperty("user.home");	//home directory on UNIX/Linux
-	private static final String SERVER_UPLOAD_LOCATION = HOME + "/tmp/Music/active/";
+	private static final String SERVER_UPLOAD_LOCATION = HOME + "/Music/";
+	
+	@Autowired
+	private PlaylistDao playlistDao;
 	
 	@GET
 	public Response test() {
@@ -54,6 +61,15 @@ public class AdminService {
 		List<String> credential = new ArrayList<String>();
 		credential.addAll(Arrays.asList(token));
 		return Response.ok(credential).build(); 
+	}
+	
+	@Path("/playlist")
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getAllMusic() {
+		List<Music> playlist = playlistDao.getAllList();
+		String headerValue = "application/json; charset=utf-8";
+		return Response.ok(playlist).header("Content-Type", headerValue).build();
 	}
 	
 	@Path("/edit/upload")

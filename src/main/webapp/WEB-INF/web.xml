@@ -20,6 +20,14 @@
 		<dispatcher>ERROR</dispatcher>
 	</filter-mapping>
 	
+	<listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>classpath:applicationContext.xml</param-value>
+    </context-param>
+	
 	<servlet>
 		<servlet-name>com.example.webadmin.ws.WebadminApplication</servlet-name>
 	</servlet>

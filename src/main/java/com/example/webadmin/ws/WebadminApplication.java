@@ -10,6 +10,9 @@ import org.glassfish.jersey.media.multipart.MultiPartFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.server.mvc.MvcFeature;
 
+import com.example.dao.MusicMapper;
+import com.example.model.Music;
+
 
 /**
  * This is the simple way to define the subclass of the Application class
@@ -48,6 +51,8 @@ public class WebadminApplication extends ResourceConfig {
 		.register(JacksonFeature.class)		//This step is very important to register Jackson JSON support for Jersey.
 		.register(MultiPartFeature.class)	//This step is required to enable MULTIPART_FORM_DATA
 		.register(MvcFeature.class);
+		//register(MusicMapper.class);
+		//register(Music.class);
     }
 
 }

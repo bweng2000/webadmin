@@ -22,25 +22,21 @@ public class PlaylistFSDao implements PlaylistDao {
 		this.inactiveFolder = inactive;
 	}
 
-	@Override
 	public List<File> getActiveList() {
 		File[] files = activeFolder.getAllFiles();
 		return Arrays.asList(files);
 	}
 
-	@Override
 	public List<File> getInactiveList() {
 		File[] files = inactiveFolder.getAllFiles();
 		return Arrays.asList(files);
 	}
 
-	@Override
 	public void addToList(List<String> newFiles) {
 		
 
 	}
 
-	@Override
 	public void deleteFromList(List<String> files) {
 		// TODO Auto-generated method stub
 
@@ -55,7 +51,6 @@ public class PlaylistFSDao implements PlaylistDao {
 		return names;
 	}
 
-	@Override
 	public List<String> getInactiveFileNames() {
 		File[] files = inactiveFolder.getAllFiles();
 		List<String> names = new ArrayList<String>();

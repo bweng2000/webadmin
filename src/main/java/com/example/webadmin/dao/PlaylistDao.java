@@ -3,16 +3,14 @@ package com.example.webadmin.dao;
 import java.io.File;
 import java.util.List;
 
+import com.example.model.Music;
+
 public interface PlaylistDao {
-	List<File> getActiveList();
+	List<Music> getAllList();
 	
-	List<File> getInactiveList();
+	void changeList(List<Music> toAdd, List<Music> toRemove, List<Music> toUpdate);
 	
-	public List<String> getActiveFileNames();
-	
-	public List<String> getInactiveFileNames();
+	void addToList(List<Music> toAdd);
 
-	void addToList(List<String> newFiles);
-
-	void deleteFromList(List<String> files);
+	void deleteFromList(List<Music> toDelete);
 }
