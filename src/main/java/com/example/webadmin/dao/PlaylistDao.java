@@ -13,4 +13,6 @@ public interface PlaylistDao {
 	void addToList(List<Music> toAdd);
 
 	void deleteFromList(List<Music> toDelete);
+	
+	void removeFromList(List<Music> toRemove);
 }

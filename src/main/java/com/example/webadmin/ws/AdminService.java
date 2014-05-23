@@ -7,6 +7,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -24,12 +25,18 @@ import javax.ws.rs.core.Response.Status;
 
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
-import org.glassfish.jersey.server.mvc.Viewable;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.example.model.Music;
 import com.example.webadmin.dao.PlaylistDao;
 
+/**
+ * This is the web service class that allows web admin to do CRUD operations.
+ * @author bweng
+ *
+ */
 @Path("/home")
 public class AdminService {
 	
@@ -68,6 +75,30 @@ public class AdminService {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getAllMusic() {
 		List<Music> playlist = playlistDao.getAllList();
+		String headerValue = "application/json; charset=utf-8";
+		return Response.ok(playlist).header("Content-Type", headerValue).build();
+	}
+	
+	@Path("/playlist/update/done")
+	@POST
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	@Transactional
+	public Response finishUpdate(List<Music> updateList) {
+		List<Music> addedItems = new ArrayList<Music>();
+		List<Music> removedItems = new ArrayList<Music>();
+		for(Music music : updateList) {
+			if(music.getStatus() == true)
+				addedItems.add(music);
+			else
+				removedItems.add(music);
+		}
+		
+		playlistDao.removeFromList(removedItems);
+		playlistDao.addToList(addedItems);
+		//playlistDao.removeFromList(removedItems);
+		List<Music> playlist = playlistDao.getAllList();
+		
 		String headerValue = "application/json; charset=utf-8";
 		return Response.ok(playlist).header("Content-Type", headerValue).build();
 	}

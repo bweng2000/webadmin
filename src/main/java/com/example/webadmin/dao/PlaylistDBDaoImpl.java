@@ -1,10 +1,13 @@
 package com.example.webadmin.dao;
 
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.List;
 
 import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
@@ -43,15 +46,67 @@ public class PlaylistDBDaoImpl implements PlaylistDao {
 	}
 
 	@Override
-	public void addToList(List<Music> toAdd) {
-		// TODO Auto-generated method stub
+	public void addToList(final List<Music> toAdd) {
+
+		String sqlQuery = "INSERT INTO Music (name, status, special, playtime) VALUES (?, ?, ?, ?)";
+		jdbcTemplate.batchUpdate(sqlQuery, new BatchPreparedStatementSetter() {
+
+			@Override
+			public void setValues(PreparedStatement ps, int i)
+					throws SQLException {
+				Music music = toAdd.get(i);
+				ps.setString(1, music.getName());
+				ps.setBoolean(2, music.getStatus());
+				ps.setBoolean(3, music.getSpecial());
+				ps.setTimestamp(4, music.getPlaytime());
+			}
+
+			@Override
+			public int getBatchSize() {
+				return toAdd.size();
+			}
+			
+		});
 
 	}
 
 	@Override
-	public void deleteFromList(List<Music> toDelete) {
-		// TODO Auto-generated method stub
+	public void deleteFromList(final List<Music> toDelete) {
+		String sqlQuery = "DELETE FROM Music WHERE id=?";
+		jdbcTemplate.batchUpdate(sqlQuery, new BatchPreparedStatementSetter() {
+			@Override
+			public void setValues(PreparedStatement ps, int i)
+					throws SQLException {
+				Music music = toDelete.get(i);
+				ps.setInt(1, music.getId());
+			}
 
+			@Override
+			public int getBatchSize() {
+				return toDelete.size();
+			}
+		});
+	}
+
+	@Override
+	public void removeFromList(final List<Music> toRemove) {
+
+		String sqlQuery = "UPDATE Music SET status=0 WHERE name=?";
+		jdbcTemplate.batchUpdate(sqlQuery, new BatchPreparedStatementSetter() {
+			
+			@Override
+			public void setValues(PreparedStatement ps, int i)
+					throws SQLException {
+				Music music = toRemove.get(i);
+				ps.setString(1, music.getName());
+			}
+
+			@Override
+			public int getBatchSize() {
+				return toRemove.size();
+			}
+			
+		});
 	}
 
 }
