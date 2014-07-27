@@ -8,7 +8,7 @@ $(document).ready(function() {
 			//dataType : "json",
 			//success : function(data, status, jqXHR) {
 			success : function() {	
-				window.location.href = '../pages/admin/hello.html';
+				window.location.href = '../index.html';
 			},
 			error : function(jqXHR, status, error) {
 				alert(jqXHR.responseText);

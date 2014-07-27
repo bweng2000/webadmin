@@ -48,7 +48,7 @@ public class PlaylistDBDaoImpl implements PlaylistDao {
 	@Override
 	public void addToList(final List<Music> toAdd) {
 
-		String sqlQuery = "INSERT INTO Music (name, status, special, playtime) VALUES (?, ?, ?, ?)";
+		String sqlQuery = "INSERT INTO Music (name, location, status, special, playtime) VALUES (?, ?, ?, ?, ?)";
 		jdbcTemplate.batchUpdate(sqlQuery, new BatchPreparedStatementSetter() {
 
 			@Override
@@ -56,9 +56,10 @@ public class PlaylistDBDaoImpl implements PlaylistDao {
 					throws SQLException {
 				Music music = toAdd.get(i);
 				ps.setString(1, music.getName());
-				ps.setBoolean(2, music.getStatus());
-				ps.setBoolean(3, music.getSpecial());
-				ps.setTimestamp(4, music.getPlaytime());
+				ps.setString(2, music.getLocation());
+				ps.setBoolean(3, music.getStatus());
+				ps.setBoolean(4, music.getSpecial());
+				ps.setTimestamp(5, music.getPlaytime());
 			}
 
 			@Override

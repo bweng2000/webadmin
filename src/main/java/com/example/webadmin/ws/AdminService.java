@@ -88,15 +88,16 @@ public class AdminService {
 		List<Music> addedItems = new ArrayList<Music>();
 		List<Music> removedItems = new ArrayList<Music>();
 		for(Music music : updateList) {
-			if(music.getStatus() == true)
+			if(music.getStatus() == true) {
+				music.setLocation(SERVER_UPLOAD_LOCATION);
 				addedItems.add(music);
-			else
+			} else {
 				removedItems.add(music);
+			}
 		}
 		
-		playlistDao.removeFromList(removedItems);
 		playlistDao.addToList(addedItems);
-		//playlistDao.removeFromList(removedItems);
+		playlistDao.removeFromList(removedItems);
 		List<Music> playlist = playlistDao.getAllList();
 		
 		String headerValue = "application/json; charset=utf-8";
@@ -118,6 +119,10 @@ public class AdminService {
 			e.printStackTrace();
 		}
 		
+		File musicDir = new File(SERVER_UPLOAD_LOCATION);
+		if(!musicDir.exists()) {
+			musicDir.mkdir();
+		}
 		String filePath = SERVER_UPLOAD_LOCATION + utf8FileName;
 		// save the file to the server
 		saveFile(fileInputStream, filePath);

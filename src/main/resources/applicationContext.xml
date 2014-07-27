@@ -14,7 +14,7 @@
 						http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
 						
 	<context:annotation-config/>
-	<tx:annotation-driven transaction-manager="txManager"/>
+	<tx:annotation-driven transaction-manager="transactionManager"/>
 
 	<bean id="dataSource"
 		class="org.apache.commons.dbcp.BasicDataSource" destroy-method="close">
@@ -25,7 +25,7 @@
 		<property name="initialSize" value="10"/>
 	</bean>
 	
-	<bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
   		<property name="dataSource" ref="dataSource"/>
   	</bean>
 	
@@ -35,6 +35,8 @@
 	
 	<bean id="playlistDAO" class="com.example.webadmin.dao.PlaylistDBDaoImpl"/>
 	
-	<bean id="adminService" class="com.example.webadmin.ws.AdminService" scope="request"></bean>
+	<bean id="devicelistDAO" class="com.example.webadmin.dao.DevicelistDaoImpl"/>
 	
+	<bean id="storegroupDAO" class="com.example.webadmin.dao.StoregroupDaoImpl"/>
+
 </beans>
