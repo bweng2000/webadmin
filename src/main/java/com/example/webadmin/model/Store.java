@@ -4,15 +4,15 @@ import java.util.List;
 import java.util.Set;
 
 public class Store {
-	private int storeID;
+	private String storeID;
 	private String storeName;
 	private long deviceID;
 	private Set<Group> groups;
 	
-	public int getStoreID() {
+	public String getStoreID() {
 		return storeID;
 	}
-	public void setStoreID(int storeID) {
+	public void setStoreID(String storeID) {
 		this.storeID = storeID;
 	}
 	public String getStoreName() {

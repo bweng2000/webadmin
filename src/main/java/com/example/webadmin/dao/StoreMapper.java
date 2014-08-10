@@ -12,7 +12,7 @@ public class StoreMapper implements RowMapper<Store> {
 	@Override
 	public Store mapRow(ResultSet rs, int rowNum) throws SQLException {
 		Store store = new Store();
-		store.setStoreID(rs.getInt("storeID"));
+		store.setStoreID(rs.getString("storeID"));
 		store.setStoreName(rs.getString("storeName"));
 		store.setDeviceID(rs.getLong("deviceID"));
 		return store;

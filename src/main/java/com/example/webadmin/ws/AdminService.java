@@ -17,7 +17,9 @@ import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.MediaType;
@@ -27,24 +29,31 @@ import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.example.model.Music;
 import com.example.webadmin.dao.PlaylistDao;
+import com.example.webadmin.dao.StoregroupDao;
+import com.example.webadmin.model.Group;
 
 /**
  * This is the web service class that allows web admin to do CRUD operations.
  * @author bweng
  *
  */
+@Component
 @Path("/home")
 public class AdminService {
 	
 	private static final String HOME = System.getProperty("user.home");	//home directory on UNIX/Linux
 	private static final String SERVER_UPLOAD_LOCATION = HOME + "/Music/";
+	private static final String headerValue = "application/json; charset=utf-8";
 	
 	@Autowired
 	private PlaylistDao playlistDao;
+	@Autowired
+	private StoregroupDao storegroupDao;
 	
 	@GET
 	public Response test() {
@@ -74,8 +83,7 @@ public class AdminService {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getAllMusic() {
-		List<Music> playlist = playlistDao.getAllList();
-		String headerValue = "application/json; charset=utf-8";
+		List<Music> playlist = playlistDao.getAllMusic();
 		return Response.ok(playlist).header("Content-Type", headerValue).build();
 	}
 	
@@ -96,11 +104,16 @@ public class AdminService {
 			}
 		}
 		
-		playlistDao.addToList(addedItems);
-		playlistDao.removeFromList(removedItems);
-		List<Music> playlist = playlistDao.getAllList();
+		List<Music> playlist;
+		try {
+			playlistDao.addToList(addedItems);
+			playlistDao.removeFromList(removedItems);
+			playlist = playlistDao.getAllMusic();
+		} catch (DataAccessException ex) {
+			throw new WebApplicationException(Response
+					.status(Status.BAD_REQUEST).entity(ex.getMessage()).build());
+		}
 		
-		String headerValue = "application/json; charset=utf-8";
 		return Response.ok(playlist).header("Content-Type", headerValue).build();
 	}
 	
@@ -150,5 +163,49 @@ public class AdminService {
 		}
 	}
 
+	@Path("playlist/add/music/to/group/{groupName}")
+	@POST
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Transactional
+	public Response addMusicToGroup(List<String> musicNames, @PathParam("groupName") String groupName) {
+		Response r = null;
+		Group group = storegroupDao.getGroupByName(groupName);
+		List<Music> musics = playlistDao.getMusicsFromNames(musicNames);
+		boolean[] flags = playlistDao.addAllMusicToGroup(musics, group);
+		StringBuilder errMsg = new StringBuilder();
+		for(int i=0; i<musics.size(); i++) {
+			if(flags[i] == false) {
+				errMsg.append(musics.get(i).getName()).append("不能加到该组中").append("\n");
+			}
+		}
+		if(errMsg.length() == 0) {
+			r = Response.ok().build();
+		} else {
+			r = Response.status(Status.BAD_REQUEST).entity(errMsg).header("Content-Type", headerValue).build();
+		}
+		return r;
+	}
 	
+	@Path("playlist/remove/music/from/group/{groupName}")
+	@POST
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Transactional
+	public Response removeMusicFromGroup(List<String> musicNames, @PathParam("groupName") String groupName) {
+		Response r = null;
+		Group group = storegroupDao.getGroupByName(groupName);
+		List<Music> musics = playlistDao.getMusicsFromNames(musicNames);
+		boolean[] flags = playlistDao.removeAllMusicFromGroup(musics, group);
+		StringBuilder errMsg = new StringBuilder();
+		for(int i=0; i<musics.size(); i++) {
+			if(flags[i] == false) {
+				errMsg.append(musics.get(i).getName()).append("不能从该组删除").append("\n");
+			}
+		}
+		if(errMsg.length() == 0) {
+			r = Response.ok().build();
+		} else {
+			r = Response.status(Status.BAD_REQUEST).entity(errMsg).header("Content-Type", headerValue).build();
+		}
+		return r;
+	}
 }

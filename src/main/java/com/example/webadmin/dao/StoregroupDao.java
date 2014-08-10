@@ -4,6 +4,7 @@ import java.sql.Timestamp;
 import java.util.List;
 import java.util.Set;
 
+import com.example.model.Device;
 import com.example.webadmin.model.Group;
 import com.example.webadmin.model.Group.Category;
 import com.example.webadmin.model.Store;
@@ -13,11 +14,13 @@ public interface StoregroupDao {
 	
 	public List<Group> getGroupByCategory(Group.Category cat);
 	
+	public Group getGroupById(int groupID);
+	
 	public Group getGroupByName(String groupName);
 	
 	public List<Store> getStoresFromGroup(Group group);
 	
-	public boolean addStoreToGroup(Store store, Group group);
+	public void addStoreToGroup(Store store, Group group);
 	
 	public boolean removeStoreFromGroup(Store store, Group group);
 	
@@ -34,6 +37,8 @@ public interface StoregroupDao {
 	
 	public Store getStoreByName(String name);
 	
-	public Store getStorebyId(int id);
+	public Store getStorebyId(String id);
+	
+	public Store addNewStore(String id, String name, long deviceID);
 
 }

@@ -17,6 +17,7 @@ public class GroupMapper implements RowMapper<Group> {
 		group.setGroupName(rs.getString("name"));
 		Group.Category cat = Group.Category.valueOf(rs.getString("category"));
 		group.setCategory(cat);
+		group.setExpireDate(rs.getTimestamp("expireDate"));
 		return group;
 	}
 

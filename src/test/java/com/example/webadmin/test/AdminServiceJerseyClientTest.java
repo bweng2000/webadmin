@@ -17,7 +17,7 @@ import org.glassfish.jersey.jackson.JacksonFeature;
 
 import com.example.model.Music;
 
-public class AdminServiceTest {
+public class AdminServiceJerseyClientTest {
 	public static void main(String[] args) {
 		
 		//Here we need to register Jackson JSON POJO mapping feature for Jersey client

@@ -51,6 +51,7 @@ public class WebadminApplication extends ResourceConfig {
 		.register(JacksonFeature.class)		//This step is very important to register Jackson JSON support for Jersey.
 		.register(MultiPartFeature.class)	//This step is required to enable MULTIPART_FORM_DATA
 		.register(MvcFeature.class);
+		//.register(JacksonConfigurator.class);
 		//register(MusicMapper.class);
 		//register(Music.class);
     }

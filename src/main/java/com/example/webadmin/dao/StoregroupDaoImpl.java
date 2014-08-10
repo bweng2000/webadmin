@@ -15,9 +15,11 @@ import java.util.concurrent.TimeUnit;
 import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.example.model.Device;
 import com.example.webadmin.model.Group;
 import com.example.webadmin.model.Group.Category;
 import com.example.webadmin.model.Store;
@@ -43,12 +45,19 @@ public class StoregroupDaoImpl implements StoregroupDao {
 	}
 
 	@Override
-	public List<Group> getGroupByCategory(Category cat) {
+	public List<Group> getGroupByCategory(Category cat) throws DataAccessException {
 		String sqlQuery = "SELECT * FROM Groups WHERE category=?";
 		List<Group> groups = jdbcTemplate.query(sqlQuery, new Object[] {cat.toString()}, new GroupMapper());
 		return groups;
 	}
 
+	@Override
+	public Group getGroupById(int groupID) {
+		String query = "SELECT * FROM Groups WHERE id=?";
+		Group group = jdbcTemplate.queryForObject(query, new Object[] {groupID}, new GroupMapper());
+		return group;
+	}	
+	
 	@Override
 	public Group getGroupByName(String groupName) {
 		String sqlQuery = "SELECT * FROM Groups WHERE name=?";
@@ -57,9 +66,8 @@ public class StoregroupDaoImpl implements StoregroupDao {
 	}
 
 	@Override
-	@Transactional
-	public boolean addStoreToGroup(Store store, Group group) {
-		List<Group> groups = getGroupsOfStore(store);
+	public void addStoreToGroup(Store store, Group group) {
+		/*List<Group> groups = getGroupsOfStore(store);
 		Set<Group> groupSet = new HashSet<Group>(groups);
 		store.setGroups(groupSet);
 		
@@ -73,23 +81,28 @@ public class StoregroupDaoImpl implements StoregroupDao {
 		}
 		String sqlQuery = "SELECT storeID FROM Store WHERE storeName=?";
 		String storeName = store.getStoreName();
-		int storeID = jdbcTemplate.queryForObject(sqlQuery, new Object[] {storeName}, Integer.class);
+		String storeID = jdbcTemplate.queryForObject(sqlQuery, new Object[] {storeName}, String.class);
 		
 		sqlQuery = "SELECT id FROM Groups WHERE name=?";
 		String groupName = group.getGroupName();
 		int groupID = jdbcTemplate.queryForObject(sqlQuery, new Object[] {groupName}, Integer.class);
+		*/
 		
-		sqlQuery = "INSERT INTO StoreGroup VALUES (?, ?)";
-		jdbcTemplate.update(sqlQuery, new Object[] {storeID, groupID}, new int[] {Types.INTEGER, Types.INTEGER});
+		String storeID = store.getStoreID();
+		int groupID = group.getId();
+		Category groupCategory = group.getCategory();
 		
-		groupSet.add(group);
+		String sqlQuery = "INSERT INTO StoreGroup (storeID, groupID, groupCategory) VALUES (?, ?, ?)";
+		jdbcTemplate.update(sqlQuery, new Object[] {storeID, groupID, groupCategory.toString()});
+		
+		/*groupSet.add(group);
 		store.setGroups(groupSet);
-		return true;
+		return true;*/
 	}
 
 	@Override
 	public boolean removeStoreFromGroup(Store store, Group group) {
-		int storeID = store.getStoreID();
+		String storeID = store.getStoreID();
 		int groupID = group.getId();
 		String sqlQuery = "DELETE FROM StoreGroup WHERE storeID=? AND groupID=?";
 		int numRow = jdbcTemplate.update(sqlQuery, new Object[] {storeID, groupID});
@@ -107,14 +120,14 @@ public class StoregroupDaoImpl implements StoregroupDao {
 				category.toString(), expireDate });
 		//schedule the deleting temporary group task
 		if (category == Category.临时) {
-			/*Timer timer = new Timer();
+			Timer timer = new Timer();
 			timer.schedule(new TimerTask() {
 				@Override
 				public void run() {
 					removeGroup(groupName);
 				}
-			}, new Date(expireDate.getTime()));*/
-			final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+			}, new Date(expireDate.getTime()));
+			/*final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 			Runnable task = new Runnable() {
 		        @Override
 		        public void run() {
@@ -129,7 +142,7 @@ public class StoregroupDaoImpl implements StoregroupDao {
 			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
-		    scheduler.shutdownNow();
+		    scheduler.shutdownNow();*/
 		}
 		return numRows;
 	}
@@ -151,7 +164,7 @@ public class StoregroupDaoImpl implements StoregroupDao {
 
 	@Override
 	public List<Group> getGroupsOfStore(Store store) {
-		int storeID = store.getStoreID();
+		String storeID = store.getStoreID();
 		String sqlQuery = "SELECT * FROM Groups g INNER JOIN StoreGroup sg ON g.id=sg.groupID AND sg.storeID=? ORDER BY g.category";
 		List<Group> groups = jdbcTemplate.query(sqlQuery, new Object[] {storeID}, new GroupMapper()); 
 		return groups;
@@ -165,9 +178,21 @@ public class StoregroupDaoImpl implements StoregroupDao {
 	}
 
 	@Override
-	public Store getStorebyId(int id) {
-		// TODO Auto-generated method stub
-		return null;
+	public Store getStorebyId(String id) {
+		String sqlQuery = "SELECT * FROM Store WHERE storeID=?";
+		Store store = jdbcTemplate.queryForObject(sqlQuery, new Object[] {id}, new StoreMapper());
+		return store;
+	}
+
+	@Override
+	public Store addNewStore(String id, String name, long deviceID) {
+		Store store = new Store();
+		store.setStoreID(id);
+		store.setStoreName(name);
+		store.setDeviceID(deviceID);
+		String sqlQuery = "INSERT INTO Store VALUES (?, ?, ?)";
+		jdbcTemplate.update(sqlQuery, new Object[] {id, name, deviceID});
+		return store;
 	}
 
 }

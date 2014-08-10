@@ -48,4 +48,15 @@ public class Group {
 		this.expireDate = expireDate;
 	}
 	
+	@Override
+	public String toString() {
+		StringBuilder sb = new StringBuilder();
+		sb.append("{id: ").append(id).append(", ");
+		sb.append("groupName: ").append(groupName).append(", ");
+		sb.append("category: ").append(category.name()).append(", ");
+		String expireDateString = expireDate != null ? expireDate.toString() : "null";
+		sb.append("expireDate: ").append(expireDateString).append("}");
+		return sb.toString();
+	}
+	
 }

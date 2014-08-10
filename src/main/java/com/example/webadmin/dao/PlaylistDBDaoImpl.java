@@ -2,17 +2,20 @@ package com.example.webadmin.dao;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
 
 import com.example.dao.MusicMapper;
 import com.example.model.Music;
+import com.example.webadmin.model.Group;
 
 /**
  * This class is the DAO class that acccess the Music table in christine database.
@@ -32,7 +35,7 @@ public class PlaylistDBDaoImpl implements PlaylistDao {
 	}*/
 	
 	@Override
-	public List<Music> getAllList() {
+	public List<Music> getAllMusic() {
 		String sqlQuery = "SELECT * FROM Music";
 		List<Music> playlist = jdbcTemplate.query(sqlQuery, new MusicMapper());
 		return playlist;
@@ -108,6 +111,73 @@ public class PlaylistDBDaoImpl implements PlaylistDao {
 			}
 			
 		});
+	}
+
+	@Override
+	public List<Music> getAllMusicFromGroup(Group group) {
+		int groupID = group.getId();
+		String query = "SELECT * FROM Music AS m INNER JOIN GroupMusic AS g WHERE g.groupID=? AND g.musicID=m.id ORDER BY m.id";
+		List<Music> music = jdbcTemplate.query(query, new Object[] {groupID}, new MusicMapper());
+		return music;
+	}
+
+	@Override
+	public boolean addMusicToGroup(Music music, Group group) {
+		int groupID = group.getId();
+		int musicID = music.getId();
+		String query = "INSERT INTO GroupMusic (groupID, musicID) VALUES (?, ?)";
+		try {
+			jdbcTemplate.update(query, new Object[] { groupID, musicID });
+		} catch (DataAccessException ex) {
+			return false;
+		}
+		return true;
+	}
+
+	@Override
+	public boolean[] addAllMusicToGroup(List<Music> music, Group group) {
+		int size = music.size();
+		boolean[] successFlags = new boolean[size];
+		for (int i = 0; i < size; i++) {
+			successFlags[i] = addMusicToGroup(music.get(i), group);
+		}
+		return successFlags;
+
+	}
+
+	@Override
+	public boolean removeMusicFromGroup(Music music, Group group) {
+		int groupID = group.getId();
+		int musicID = music.getId();
+		String query = "DELETE FROM GroupMusic WHERE groupID=? AND musicID=?";
+		try {
+			jdbcTemplate.update(query, new Object[] {groupID, musicID});
+		} catch (DataAccessException ex) {
+			return false;
+		}
+		return true;
+	}
+
+	@Override
+	public boolean[] removeAllMusicFromGroup(List<Music> music, Group group) {
+		int size = music.size();
+		boolean[] successFlags = new boolean[size];
+		for(int i =0; i < size; i++) {
+			successFlags[i] = removeMusicFromGroup(music.get(i), group);
+		}
+		return successFlags;
+	}
+
+	@Override
+	public List<Music> getMusicsFromNames(List<String> names) {
+		List<Music> musics = new ArrayList<Music>();
+		Music singleItem;
+		String query = "SELECT * FROM Music WHERE name=?";
+		for(String name : names) {
+			singleItem = jdbcTemplate.queryForObject(query, new Object[] {name}, new MusicMapper());
+			musics.add(singleItem);
+		}
+		return musics;
 	}
 
 }
