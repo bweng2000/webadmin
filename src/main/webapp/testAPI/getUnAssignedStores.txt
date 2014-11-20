@@ -1,0 +1,12 @@
+[
+    {
+        "storeID": "C11022",
+        "storeName": "重庆北路店",
+        "deviceID": 10436312250000
+    },
+    {
+        "storeID": "C11024",
+        "storeName": "山海关路店",
+        "deviceID": 0
+    }
+]

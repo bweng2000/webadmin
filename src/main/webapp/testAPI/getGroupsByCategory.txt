@@ -1,0 +1,76 @@
+﻿[
+
+    {
+        "id": 1000,
+        "groupName": "长宁区",
+        "category": "区域",
+        "expireDate": null
+    },
+    {
+        "id": 1002,
+        "groupName": "静安区",
+        "category": "区域",
+        "expireDate": null
+    },
+    {
+        "id": 1004,
+        "groupName": "浦东新区",
+        "category": "区域",
+        "expireDate": null
+    },
+    {
+        "id": 1000,
+        "groupName": "长宁区",
+        "category": "区域",
+        "expireDate": null
+    },
+    {
+        "id": 1002,
+        "groupName": "静安区",
+        "category": "区域",
+        "expireDate": null
+    },
+    {
+        "id": 1004,
+        "groupName": "浦东新区",
+        "category": "区域",
+        "expireDate": null
+    },
+    {
+        "id": 1000,
+        "groupName": "长宁区",
+        "category": "区域",
+        "expireDate": null
+    },
+    {
+        "id": 1002,
+        "groupName": "静安区",
+        "category": "区域",
+        "expireDate": null
+    },
+    {
+        "id": 1004,
+        "groupName": "浦东新区",
+        "category": "区域",
+        "expireDate": null
+    },
+    {
+        "id": 1000,
+        "groupName": "长宁区",
+        "category": "区域",
+        "expireDate": null
+    },
+    {
+        "id": 1002,
+        "groupName": "静安区",
+        "category": "区域",
+        "expireDate": null
+    },
+    {
+        "id": 1004,
+        "groupName": "浦东新区",
+        "category": "区域",
+        "expireDate": null
+    }
+
+]

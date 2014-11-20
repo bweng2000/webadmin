@@ -74,6 +74,7 @@ public class StoregroupDaoTest {
 		assertEquals("旗舰店", groups.get(1).getGroupName());
 	}
 	
+	@Ignore
 	@Test
 	public void testAddStore() {
 		Store store = dao.getStoreByName("长宁店");
@@ -83,12 +84,14 @@ public class StoregroupDaoTest {
 		//assertFalse(dao.addStoreToGroup(store, group));
 	}
 	
-	@Ignore
+	//@Ignore
 	@Test
 	public void testAdd() {
-		String groupName = "测试组-7";
+		String groupName = "测试组-8";
 		Category category = Category.临时;
-		Timestamp expireTime = new Timestamp(1406253589000L);
+		//Timestamp expireTime = new Timestamp(1406253589000L);
+		@SuppressWarnings("deprecation")
+		Timestamp expireTime = new Timestamp(114, 8, 4, 10, 39, 0, 0);
 		int numRows = dao.addNewGroup(groupName, category, expireTime);
 		/*assertEquals(1, numRows);
 		Group group = dao.getGroupByName(groupName);
@@ -101,8 +104,7 @@ public class StoregroupDaoTest {
 	public void testDelete() {
 		Store store = dao.getStoreByName("浦东一号店");
 		Group group = dao.getGroupByName("打折组");
-		boolean successFlag = dao.removeStoreFromGroup(store, group);
-		assertTrue(successFlag);
+		//assertTrue(dao.removeStoreFromGroup(store, group););
 	}
 
 }

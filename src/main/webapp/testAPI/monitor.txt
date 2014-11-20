@@ -1,0 +1,28 @@
+[
+
+    {
+        "deviceID": 14230739172120,
+        "connectStatus": false,
+        "timeReported": "2014-05-28T09:28:45.000+0800",
+        "storeName": "长宁店"
+    },
+    {
+        "deviceID": 279317396357982,
+        "connectStatus": false,
+        "timeReported": "2014-06-03T21:30:20.000+0800",
+        "storeName": "浦东一号店"
+    },
+    {
+        "deviceID": 354659215,
+        "connectStatus": false,
+        "timeReported": "2014-07-01T12:00:00.000+0800",
+        "storeName": "人民广场店"
+    },
+    {
+        "deviceID": 10436312250000,
+        "connectStatus": false,
+        "timeReported": "2014-07-01T12:00:00.000+0800",
+        "storeName": "重庆北路店"
+    }
+
+]

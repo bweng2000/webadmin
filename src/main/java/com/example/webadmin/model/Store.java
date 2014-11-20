@@ -3,10 +3,13 @@ package com.example.webadmin.model;
 import java.util.List;
 import java.util.Set;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
+
 public class Store {
 	private String storeID;
 	private String storeName;
 	private long deviceID;
+	@JsonIgnore
 	private Set<Group> groups;
 	
 	public String getStoreID() {

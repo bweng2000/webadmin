@@ -1,7 +1,10 @@
 package com.example.webadmin.dao;
 
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.sql.Types;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -16,10 +19,12 @@ import javax.sql.DataSource;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.model.Device;
+import com.example.musicplayer.model.Device;
+import com.example.musicplayer.model.Music;
 import com.example.webadmin.model.Group;
 import com.example.webadmin.model.Group.Category;
 import com.example.webadmin.model.Store;
@@ -35,6 +40,8 @@ public class StoregroupDaoImpl implements StoregroupDao {
 	private DataSource dataSource;
 	@Autowired
 	private JdbcTemplate jdbcTemplate;
+	
+	private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(5);
 
 	@Override
 	public List<Group> getAllGroups() {
@@ -101,12 +108,11 @@ public class StoregroupDaoImpl implements StoregroupDao {
 	}
 
 	@Override
-	public boolean removeStoreFromGroup(Store store, Group group) {
+	public void removeStoreFromGroup(Store store, Group group) {
 		String storeID = store.getStoreID();
 		int groupID = group.getId();
 		String sqlQuery = "DELETE FROM StoreGroup WHERE storeID=? AND groupID=?";
-		int numRow = jdbcTemplate.update(sqlQuery, new Object[] {storeID, groupID});
-		return numRow > 0 ? true : false;
+		jdbcTemplate.update(sqlQuery, new Object[] {storeID, groupID});
 	}
 
 	@Override
@@ -118,40 +124,81 @@ public class StoregroupDaoImpl implements StoregroupDao {
 		String sqlQuery = "INSERT INTO Groups (name, category, expireDate) VALUES (?, ?, ?)";
 		int numRows = jdbcTemplate.update(sqlQuery, new Object[] { groupName,
 				category.toString(), expireDate });
+		
 		//schedule the deleting temporary group task
 		if (category == Category.临时) {
-			Timer timer = new Timer();
+			/*Timer timer = new Timer();
 			timer.schedule(new TimerTask() {
 				@Override
 				public void run() {
 					removeGroup(groupName);
 				}
-			}, new Date(expireDate.getTime()));
-			/*final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+			}, new Date(expireDate.getTime()));*/
+
+			System.out.println(expireDate.getTime());
+			System.out.println(System.currentTimeMillis());
+			System.out.println(expireDate.getTime()-System.currentTimeMillis());
+			
 			Runnable task = new Runnable() {
 		        @Override
 		        public void run() {
-		        	//removeGroup(groupName);
+		        	System.out.println("Running the scheduled task.");
 		        	String query = "DELETE FROM Groups WHERE name=?";
 		    		jdbcTemplate.update(query, new Object[] {groupName});
 		        }
 		    };
-		    scheduler.schedule(task, expireDate.getTime()-System.currentTimeMillis(), TimeUnit.MILLISECONDS);
-		    try {
+			scheduler.schedule(task, expireDate.getTime()-System.currentTimeMillis(), TimeUnit.MILLISECONDS);
+		    
+		    /*try {
 				Thread.sleep(3000);
 			} catch (InterruptedException e) {
 				e.printStackTrace();
-			}
-		    scheduler.shutdownNow();*/
+			}*/
+		    //scheduler.shutdownNow();
 		}
 		return numRows;
 	}
+	
+	/*private void scheduleDeleteTask(Timestamp expireDate, final String groupName) {
+		
+		Runnable task = new Runnable() {
+	        @Override
+	        public void run() {
+	        	System.out.println("Running the scheduled task...");
+	        	String query = "DELETE FROM Groups WHERE name=?";
+	    		jdbcTemplate.update(query, new Object[] {groupName});
+	        }
+	    };
+		scheduler.schedule(task, expireDate.getTime()-System.currentTimeMillis(), TimeUnit.MILLISECONDS);
+	}*/
 
 
 	@Override
 	public void removeGroup(String groupName) {
 		String sqlQuery = "DELETE FROM Groups WHERE name=?";
 		jdbcTemplate.update(sqlQuery, new Object[] {groupName});
+	}
+	
+	@Override
+	public void removeSomeGroups(final List<String> groupNames) {
+		String query = "DELETE FROM Groups WHERE name=?";
+
+		jdbcTemplate.batchUpdate(query, new BatchPreparedStatementSetter() {
+
+			@Override
+			public void setValues(PreparedStatement ps, int i)
+					throws SQLException {
+				String groupName = groupNames.get(i);
+				Group group = getGroupByName(groupName);
+				ps.setString(1, group.getGroupName());
+			}
+
+			@Override
+			public int getBatchSize() {
+				return groupNames.size();
+			}
+			
+		});
 	}
 
 	@Override
@@ -193,6 +240,20 @@ public class StoregroupDaoImpl implements StoregroupDao {
 		String sqlQuery = "INSERT INTO Store VALUES (?, ?, ?)";
 		jdbcTemplate.update(sqlQuery, new Object[] {id, name, deviceID});
 		return store;
+	}
+
+	@Override
+	public Store getStoreByDeviceID(long deviceID) {
+		String query = "SELECT * FROM Store WHERE deviceID=?";
+		Store store = jdbcTemplate.queryForObject(query, new Object[] {deviceID}, new StoreMapper());
+		return store;
+	}
+	
+	@Override
+	public List<Store> getStoreUnassigned() {
+		String query = "SELECT * FROM Store WHERE storeID NOT IN (SELECT storeID FROM StoreGroup)";
+		List<Store> unassignedStores = jdbcTemplate.query(query, new StoreMapper());
+		return unassignedStores;
 	}
 
 }

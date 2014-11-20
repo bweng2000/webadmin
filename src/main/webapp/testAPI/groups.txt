@@ -1,0 +1,52 @@
+[
+
+    {
+        "id": 1000,
+        "groupName": "长宁区",
+        "category": "区域",
+        "expireDate": null
+    },
+    {
+        "id": 1001,
+        "groupName": "旗舰店",
+        "category": "级别",
+        "expireDate": null
+    },
+    {
+        "id": 1002,
+        "groupName": "静安区",
+        "category": "区域",
+        "expireDate": null
+    },
+    {
+        "id": 1004,
+        "groupName": "浦东新区",
+        "category": "区域",
+        "expireDate": null
+    },
+    {
+        "id": 1005,
+        "groupName": "徐汇区",
+        "category": "区域",
+        "expireDate": null
+    },
+    {
+        "id": 1007,
+        "groupName": "打折组",
+        "category": "临时",
+        "expireDate": "2014-07-24T21:09:34.000+0800"
+    },
+    {
+        "id": 1008,
+        "groupName": "促销组",
+        "category": "临时",
+        "expireDate": "2014-07-24T21:19:23.000+0800"
+    },
+    {
+        "id": 1017,
+        "groupName": "崇明区",
+        "category": "区域",
+        "expireDate": null
+    }
+
+]

@@ -16,6 +16,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -28,11 +29,12 @@ import javax.ws.rs.core.Response.Status;
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.model.Music;
+import com.example.musicplayer.model.Music;
 import com.example.webadmin.dao.PlaylistDao;
 import com.example.webadmin.dao.StoregroupDao;
 import com.example.webadmin.model.Group;
@@ -46,7 +48,9 @@ import com.example.webadmin.model.Group;
 @Path("/home")
 public class AdminService {
 	
+	//!This may be a problem in Windows since Windows 7 cannot resolve user.home system property!
 	private static final String HOME = System.getProperty("user.home");	//home directory on UNIX/Linux
+	
 	private static final String SERVER_UPLOAD_LOCATION = HOME + "/Music/";
 	private static final String headerValue = "application/json; charset=utf-8";
 	
@@ -87,27 +91,15 @@ public class AdminService {
 		return Response.ok(playlist).header("Content-Type", headerValue).build();
 	}
 	
-	@Path("/playlist/update/done")
-	@POST
+	@Path("/playlist/update")
+	@PUT
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Transactional
 	public Response finishUpdate(List<Music> updateList) {
-		List<Music> addedItems = new ArrayList<Music>();
-		List<Music> removedItems = new ArrayList<Music>();
-		for(Music music : updateList) {
-			if(music.getStatus() == true) {
-				music.setLocation(SERVER_UPLOAD_LOCATION);
-				addedItems.add(music);
-			} else {
-				removedItems.add(music);
-			}
-		}
-		
 		List<Music> playlist;
 		try {
-			playlistDao.addToList(addedItems);
-			playlistDao.removeFromList(removedItems);
+			playlistDao.updateList(updateList);
 			playlist = playlistDao.getAllMusic();
 		} catch (DataAccessException ex) {
 			throw new WebApplicationException(Response
@@ -120,6 +112,7 @@ public class AdminService {
 	@Path("/edit/upload")
 	@POST
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
+	@Transactional
 	public Response uploadFile(
 			@FormDataParam("file") InputStream fileInputStream,
 			@FormDataParam("file") FormDataContentDisposition contentDispositionHeader) {
@@ -137,34 +130,59 @@ public class AdminService {
 			musicDir.mkdir();
 		}
 		String filePath = SERVER_UPLOAD_LOCATION + utf8FileName;
+		
+		List<Music> updatedList;
 		// save the file to the server
-		saveFile(fileInputStream, filePath);
+		try {
+			saveFile(fileInputStream, filePath);
+			Music newItem = new Music();
+			newItem.setName(utf8FileName);
+			newItem.setLocation(SERVER_UPLOAD_LOCATION);
+			playlistDao.addNewMusicForStaging(newItem);
+			updatedList = playlistDao.getAllMusic();
+		} catch (IOException e) {
+			throw new WebApplicationException(Response.status(Status.BAD_REQUEST).entity(e.getMessage()).build());
+		} catch (DataAccessException dae) {
+			throw new WebApplicationException(Response.status(Status.BAD_REQUEST).entity(dae.getMessage()).build());
+		}
 
-		String output = "File saved to server location : " + filePath;
-		return Response.status(200).entity(output).build();
+		return Response.status(200).entity(updatedList).header("Content-Type", headerValue).build();
 	}
 
 	// save uploaded file to a defined location on the server
-	private void saveFile(InputStream uploadedInputStream, String serverLocation) {
-		try {
-			OutputStream outpuStream = new FileOutputStream(new File(
-					serverLocation));
-			int read = 0;
-			byte[] bytes = new byte[1024];
-			outpuStream = new FileOutputStream(new File(serverLocation));
+	private void saveFile(InputStream uploadedInputStream, String serverLocation)
+			throws IOException {
 
-			while ((read = uploadedInputStream.read(bytes)) != -1) {
-				outpuStream.write(bytes, 0, read);
-			}
-			outpuStream.flush();
-			outpuStream.close();
-		} catch (IOException e) {
-			e.printStackTrace();
+		OutputStream outpuStream = new FileOutputStream(
+				new File(serverLocation));
+		int read = 0;
+		byte[] bytes = new byte[1024];
+		outpuStream = new FileOutputStream(new File(serverLocation));
+
+		while ((read = uploadedInputStream.read(bytes)) != -1) {
+			outpuStream.write(bytes, 0, read);
 		}
+		outpuStream.flush();
+		outpuStream.close();
 	}
 
-	@Path("playlist/add/music/to/group/{groupName}")
-	@POST
+	@Path("playlist/group/{groupName}")
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	@Transactional
+	public Response getMusicsByGroup(@PathParam("groupName") String groupName) {
+		List<Music> groupMusics;
+		try {
+			Group group = storegroupDao.getGroupByName(groupName);
+			groupMusics = playlistDao.getAllMusicFromGroup(group);
+		} catch (DataAccessException e) {
+			throw new WebApplicationException(Response.status(Status.NOT_FOUND).build());
+		}
+		return Response.ok().entity(groupMusics).header("Content-Type", headerValue).build();
+	}
+	
+	@Path("playlist/group/{groupName}/add")
+	@PUT
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Transactional
 	public Response addMusicToGroup(List<String> musicNames, @PathParam("groupName") String groupName) {
@@ -179,15 +197,15 @@ public class AdminService {
 			}
 		}
 		if(errMsg.length() == 0) {
-			r = Response.ok().build();
+			r = Response.ok("添加成功").build();
 		} else {
 			r = Response.status(Status.BAD_REQUEST).entity(errMsg).header("Content-Type", headerValue).build();
 		}
 		return r;
 	}
 	
-	@Path("playlist/remove/music/from/group/{groupName}")
-	@POST
+	@Path("playlist/group/{groupName}/remove")
+	@PUT
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Transactional
 	public Response removeMusicFromGroup(List<String> musicNames, @PathParam("groupName") String groupName) {
@@ -202,7 +220,7 @@ public class AdminService {
 			}
 		}
 		if(errMsg.length() == 0) {
-			r = Response.ok().build();
+			r = Response.ok("删除成功").build();
 		} else {
 			r = Response.status(Status.BAD_REQUEST).entity(errMsg).header("Content-Type", headerValue).build();
 		}

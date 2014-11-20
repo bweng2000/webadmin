@@ -1,17 +1,22 @@
 package com.example.webadmin.dao;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.util.List;
 
-import com.example.model.Music;
+import org.springframework.dao.DataAccessException;
+
+import com.example.musicplayer.model.Music;
 import com.example.webadmin.model.Group;
 
 public interface PlaylistDao {
 	List<Music> getAllMusic();
 	
-	void changeList(List<Music> toAdd, List<Music> toRemove, List<Music> toUpdate);
+	void updateList(List<Music> toUpdate);
 	
 	void addToList(List<Music> toAdd);
+	
+	void addNewMusicForStaging(Music music);
 
 	void deleteFromList(List<Music> toDelete);
 	
@@ -28,5 +33,9 @@ public interface PlaylistDao {
 	boolean[] removeAllMusicFromGroup(List<Music> music, Group group);
 	
 	List<Music> getMusicsFromNames(List<String> names);
+
+	File getFileById(int id) throws DataAccessException, FileNotFoundException;
+
+	List<Music> getActiveList();
 
 }

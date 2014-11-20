@@ -2,7 +2,7 @@ package com.example.webadmin.model;
 
 import java.sql.Timestamp;
 
-public class Group {
+public class Group implements Comparable<Group> {
 	/*public enum Category {
 		AREA("区域"),
 		LEVEL("级别"),
@@ -57,6 +57,28 @@ public class Group {
 		String expireDateString = expireDate != null ? expireDate.toString() : "null";
 		sb.append("expireDate: ").append(expireDateString).append("}");
 		return sb.toString();
+	}
+	
+	/**
+	 * This method implements the Comparable interface.
+	 * This Group priority is based on group category.
+	 * 临时 > 级别 > 区域
+	 */
+	@Override
+	public int compareTo(Group o) {
+		if(this.category == o.category)
+			return 0;
+		
+		if (this.category == Category.临时) {
+			return 1;
+		} else if (this.category == Category.级别) {
+			if (o.category == Category.临时)
+				return -1;
+			else
+				return 1;
+		} else {
+			return -1;
+		}
 	}
 	
 }

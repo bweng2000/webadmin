@@ -23,6 +23,7 @@
 		<property name="username" value="root"/>
 		<property name="password" value="guowanjie"/>
 		<property name="initialSize" value="10"/>
+		<property name="validationQuery" value="SELECT 1"/>
 	</bean>
 	
 	<bean id="txManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
@@ -33,7 +34,9 @@
 		<property name="dataSource" ref="dataSource"></property>
 	</bean>
 	
-	<bean id="playlistDAO" class="com.example.webadmin.dao.PlaylistDBDaoImpl"/>
+	<bean id="deviceDAO" class="com.example.musicplayer.dao.DeviceDAOImpl"/>
+	
+	<bean id="playlistDao" class="com.example.webadmin.dao.PlaylistDBDaoImpl"/>
 	
 	<bean id="devicelistDAO" class="com.example.webadmin.dao.DevicelistDaoImpl"/>
 	

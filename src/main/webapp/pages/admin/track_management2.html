@@ -1,0 +1,96 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<title>Track Mannagement</title>
+<meta name="description" content="">
+<meta name="keywords" content="">
+<link rel="stylesheet" type="text/css" href="../../css/jquery.dataTables.min.css" />
+<link rel="stylesheet" type="text/css" href="../../css/dataTables.reset.css" />
+<link rel="stylesheet" type="text/css" href="../../css/index.css" />
+<script type="text/javascript">
+    window.config = {
+        category : "级别"
+    }
+</script>
+</head>
+<body>
+    <iframe src="#" name="J_Form_Target" id="J_Form_Target" style="width:0px;overflow:hidden;position:absolute;z-index:9999;left:-999px;"></iframe>
+    <div class="header clearfix">
+    	<div class="logo">
+    		<img src="../../images/logo.png" width="142" height="22" alt="播放管理系统" />
+    	</div>
+    	<div class="login">
+    		<span>超级管理员</span>欢迎您 | <a href="javascript:;" func="logout">退出登陆</a>
+    	</div>
+    </div>
+    <div class="body clearfix">
+    	<div class="side">
+    		<ul class="nav">
+    			<li class="first">
+    				<div class="cap"><a href="terminal_management.html"><i class="terminal"></i><span>终端管理</span><em></em></a></div>
+    			</li>
+    			<li class="selected">
+    				<div class="cap"><a href="track_management.html"><i class="track"></i><span>曲目管理</span><em></em></a></div>
+    				<ul class="sub-nav">
+    					<li><a href="track_management.html"><i></i>区域组</a></li>
+    					<li class="selected"><a href="track_management2.html"><i></i>级别组</a></li>
+    					<li><a href="track_management3.html"><i></i>临时组</a></li>
+    				</ul>
+    			</li>
+    			<li>
+    				<div class="cap"><a href="group_management.html"><i class="group"></i><span>分组管理</span><em></em></a></div>
+    				<ul class="sub-nav" style="display:none;">
+    					<li><a href="group_management.html"><i></i>区域组</a></li>
+    					<li><a href="group_management2.html"><i></i>级别组</a></li>
+    					<li><a href="group_management3.html"><i></i>临时组</a></li>
+    				</ul>
+    			</li>
+    		</ul>
+    	</div>
+    	<div class="main">
+            <div class="main-header">
+                <div class="main-header-top">
+                    <h1>曲目管理</h1>
+                    <p>添加删除歌曲，添加插播</p>
+                </div>
+            </div>
+            <div class="main-body">
+                <div class="main-title" id="J_Groups_Wrapper">
+                    <div class="main-title-inner"><ul class="main-list clearfix" id="J_Groups_List"></ul></div>
+                    <a href="javascript:;" class="left-arrow" id="J_Left_Arrow" title="上一页"></a>
+                    <a href="javascript:;" class="right-arrow" id="J_Right_Arrow" title="下一页"></a>
+                </div>
+                <div class="line"></div>
+                <div class="main-section">
+                    <div class="operations clearfix">
+                        <a href="javascript:;" class="blue-button" id="J_Music_Add">添加歌曲</a>
+                        <a href="javascript:;" class="red-button" id="J_Music_Delete">删除歌曲</a>
+                        <a href="javascript:;" class="up-button" title="上移" id="J_Music_Up"></a>
+                        <a href="javascript:;" class="down-button" title="下移" id="J_Music_Down"></a>
+                    </div>
+                    <div class="table-wrapper">
+                    	<table cellspacing="0" cellpadding="0" id="J_Data_Table">
+                    		<thead>
+                    			<tr>
+                    				<th><i class="j-checkbox"></i></th>
+                    				<th>名称</th>
+                    				<th>状态</th>
+                    				<th>备注</th>
+                    				<th>播放时间</th>
+                    			</tr>
+                    		</thead>
+                    	</table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+<script type="text/javascript" src="../../js/lib/jquery-1.11.1.min.js"></script>
+<script type="text/javascript" src="../../js/lib/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="../../js/app/globalSettings.js"></script>
+<script type="text/javascript" src="../../js/app/common.js"></script>
+<script type="text/javascript" src="../../js/app/trackManagement.js"></script>
+</html>

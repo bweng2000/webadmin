@@ -15,7 +15,7 @@ import org.glassfish.jersey.client.ClientConfig;
 import org.glassfish.jersey.client.ClientResponse;
 import org.glassfish.jersey.jackson.JacksonFeature;
 
-import com.example.model.Music;
+import com.example.musicplayer.model.Music;
 
 public class AdminServiceJerseyClientTest {
 	public static void main(String[] args) {

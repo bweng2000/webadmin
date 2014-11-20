@@ -30,13 +30,13 @@ import com.example.webadmin.model.Store;
 public class StoreGroupService {
 	@Autowired
 	private StoregroupDao storegroupDao;
+	private String headerValue = "application/json; charset=utf-8";
 	
 	@Path("groups")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getGroups() {
 		List<Group> groups = storegroupDao.getAllGroups();
-		String headerValue = "application/json; charset=utf-8";
 		return Response.ok(groups).header("Content-Type", headerValue).build();
 	}
 	
@@ -52,7 +52,6 @@ public class StoreGroupService {
 		} catch (DataAccessException e) {
 			throw new WebApplicationException(Response.Status.INTERNAL_SERVER_ERROR);
 		}
-		String headerValue = "application/json; charset=utf-8";
 		return Response.ok(groups).header("Content-Type", headerValue).build();
 	}
 	
@@ -66,7 +65,6 @@ public class StoreGroupService {
 		} catch (DataAccessException e) {
 			throw new WebApplicationException(Response.Status.NOT_FOUND);
 		}
-		String headerValue = "application/json; charset=utf-8";
 		return Response.ok(group).header("Content-Type", headerValue).build();
 	}
 	
@@ -76,8 +74,11 @@ public class StoreGroupService {
 	public Response createNewGroup(@FormParam("groupName") String groupName, @FormParam("groupCategory") String groupCategory,
 			@FormParam("expireDate") Timestamp expireDate) {
 		Response r = null;
+		if(groupCategory.endsWith("组")) {
+			groupCategory = groupCategory.substring(0, groupCategory.length()-1);
+		}
 		Category category = Category.valueOf(groupCategory);
-		String headerValue = "application/json; charset=utf-8";
+
 		try {
 			storegroupDao.addNewGroup(groupName, category, expireDate);
 			r = Response.ok().entity("创建新组成功").build();
@@ -98,21 +99,34 @@ public class StoreGroupService {
 		return Response.status(Status.OK).build();
 	}
 	
+	@Path("groups/delete")
+	@POST
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Transactional
+	public Response deleteGroupsByNames(List<String> groupNames) {
+		Response r;
+		try {
+			storegroupDao.removeSomeGroups(groupNames);
+			r = Response.ok().build();
+		} catch (DataAccessException e) {
+			r = Response.status(Status.BAD_REQUEST).build();
+		}
+		return r;
+	}
+	
 	@Path("store/add/to/group")
 	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.TEXT_PLAIN)
 	@Transactional
-	public Response addStoresToGroup(@FormParam("storeName") List<String> storeNames, @FormParam("groupName") String groupName) {
+	public Response addStoresToGroup(@FormParam("storeName") String storeName, @FormParam("groupName") String groupName) {
 		Store store;
+		String[] storeNames = parseJSArray(storeName);
 		Group group = storegroupDao.getGroupByName(groupName);
 		String headerValue = "text/plain; charset=utf-8";
 		for (String name : storeNames) {
 			store = storegroupDao.getStoreByName(name);
-			/*if(!storegroupDao.addStoreToGroup(store, group)) {
-				String errMsg = "门店: " + name + "不能放到" + groupName;
-				throw new WebApplicationException(Response.status(Status.CONFLICT).entity(errMsg).header("Content-Type", headerValue).build());
-			}*/
+
 			try {
 				storegroupDao.addStoreToGroup(store, group);
 			} catch (DataAccessException ex) {
@@ -120,26 +134,68 @@ public class StoreGroupService {
 				throw new WebApplicationException(Response.status(Status.CONFLICT).entity(errMsg).header("Content-Type", headerValue).build());
 			}
 		}
-		return Response.ok().build();
+		return Response.ok("添加成功").build();
 	}
 	
 	@Path("store/remove/from/group")
-	@DELETE
+	@POST
 	@Consumes(MediaType.APPLICATION_FORM_URLENCODED)
 	@Produces(MediaType.TEXT_PLAIN)
 	@Transactional
-	public Response removeStoresFromGroup(@FormParam("storeName") List<String> storeNames, @FormParam("groupName") String groupName) {
+	public Response removeStoresFromGroup(@FormParam("storeName") String storeName, @FormParam("groupName") String groupName) {
 		Store store;
+		String[] storeNames = parseJSArray(storeName);
 		Group group = storegroupDao.getGroupByName(groupName);
 		String headerValue = "text/plain; charset=utf-8";
 		for (String name : storeNames) {
 			store = storegroupDao.getStoreByName(name);
-			if(!storegroupDao.removeStoreFromGroup(store, group)) {
+			
+			try {
+				storegroupDao.removeStoreFromGroup(store, group);
+			} catch (DataAccessException ex) {
 				String errMsg = "门店: " + name + "不能从" + groupName + "中删除";
 				throw new WebApplicationException(Response.status(Status.CONFLICT).entity(errMsg).header("Content-Type", headerValue).build());
 			}
 		}
-		return Response.ok().build();
+		return Response.ok("删除成功").build();
 	}
 
+	@Path("store/{groupName}")
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getStoresByGroupName(@PathParam("groupName") String groupName) {
+		Response r;
+		try {
+			Group group = storegroupDao.getGroupByName(groupName);
+			List<Store> stores = storegroupDao.getStoresFromGroup(group);
+			r = Response.ok().entity(stores).header("Content-Type", headerValue).build();
+		} catch (DataAccessException e) {
+			r = Response.status(Status.NOT_FOUND).build();
+		}
+		return r;
+	}
+	
+	@Path("store/unassigned")
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getStoreUnAssigned() {
+		Response r;
+		try {
+			List<Store> unassigned = storegroupDao.getStoreUnassigned();
+			r = Response.ok().entity(unassigned).header("Content-Type", headerValue).build();
+		} catch(DataAccessException e) {
+			r = Response.status(Status.NOT_FOUND).build();
+		}
+		return r;
+	}
+	
+	/**
+	 * This is a helper method to split a JS string array to individual string.
+	 * @param jsArray input JS array
+	 * @return array of strings
+	 */
+	private String[] parseJSArray(String jsArray) {
+		String[] elements = jsArray.split("[,\\[\\]]");
+		return elements;
+	}
 }

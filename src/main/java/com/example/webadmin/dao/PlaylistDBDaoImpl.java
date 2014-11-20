@@ -1,9 +1,13 @@
 package com.example.webadmin.dao;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import javax.sql.DataSource;
 
@@ -12,9 +16,10 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 
-import com.example.dao.MusicMapper;
-import com.example.model.Music;
+import com.example.musicplayer.dao.MusicMapper;
+import com.example.musicplayer.model.Music;
 import com.example.webadmin.model.Group;
 
 /**
@@ -40,11 +45,34 @@ public class PlaylistDBDaoImpl implements PlaylistDao {
 		List<Music> playlist = jdbcTemplate.query(sqlQuery, new MusicMapper());
 		return playlist;
 	}
+	
+	@Override
+	public List<Music> getActiveList() {
+		String sqlQuery = "SELECT * FROM Music WHERE status=1";
+		List<Music> playlist = jdbcTemplate.query(sqlQuery, new MusicMapper());
+		return playlist;
+	}
 
 	@Override
-	public void changeList(List<Music> toAdd, List<Music> toRemove,
-			List<Music> toUpdate) {
-		// TODO Auto-generated method stub
+	public void updateList(final List<Music> toUpdate) {
+		String query = "UPDATE Music SET status=?, special=?, playtime=?";
+		jdbcTemplate.batchUpdate(query, new BatchPreparedStatementSetter() {
+
+			@Override
+			public void setValues(PreparedStatement ps, int i)
+					throws SQLException {
+				Music music = toUpdate.get(i);
+				ps.setBoolean(1, music.getStatus());
+				ps.setBoolean(2, music.getSpecial());
+				ps.setTimestamp(3, music.getPlaytime());
+			}
+
+			@Override
+			public int getBatchSize() {
+				return toUpdate.size();
+			}
+			
+		});
 
 	}
 
@@ -174,10 +202,37 @@ public class PlaylistDBDaoImpl implements PlaylistDao {
 		Music singleItem;
 		String query = "SELECT * FROM Music WHERE name=?";
 		for(String name : names) {
+			/*if(!name.endsWith(".mp3")) {
+				name += ".mp3";
+			}*/
 			singleItem = jdbcTemplate.queryForObject(query, new Object[] {name}, new MusicMapper());
 			musics.add(singleItem);
 		}
 		return musics;
+	}
+	
+	@Override
+	public File getFileById(int id) throws DataAccessException, FileNotFoundException {
+		String sqlQuery = "SELECT name, location FROM Music WHERE id=?";
+		Map<String, Object> result = jdbcTemplate.queryForMap(sqlQuery, new Object[] { id });
+		String name = (String) result.get("name");
+		String location = (String) result.get("location");
+
+		if (!location.endsWith("/")) {
+			location = location.concat("/");
+		}
+		File mediaFile = new File(location + name);
+		if(!mediaFile.exists())
+			throw new FileNotFoundException();
+		return mediaFile;
+	}
+
+	@Override
+	public void addNewMusicForStaging(Music music) throws DataAccessException {
+		String query = "INSERT INTO Music (name, location, status, special, playtime) VALUES (?, ?, 0, 0, null)";
+		String name = music.getName();
+		String location = music.getLocation();
+		jdbcTemplate.update(query, new Object[] {name, location});
 	}
 
 }

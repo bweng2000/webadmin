@@ -1,0 +1,239 @@
+/* Mixin 
+========================================================================================= */
+
+.aTagStyle( @def_c : #fff, @hover_c : #1f90de, @visited_c: #fff, @underline : none ) {
+	text-decoration: none;
+	&:link {
+		color: @def_c;
+	}
+	&:hover, &:focus, &:focus {
+		color: @hover_c;
+		text-decoration: @underline;
+	}
+	&:visited {
+		color: @visited_c;
+	}
+}
+.aTagStyleImporant( @def_c : #fff, @hover_c : #1f90de, @visited_c: #fff, @underline : none, @important : ~"!important" ) {
+	text-decoration: none;
+	&:link {
+		color: @def_c @important;
+	}
+	&:hover, &:focus, &:focus {
+		color: @hover_c @important;
+		text-decoration: @underline;
+	}
+	&:visited {
+		color: @visited_c @important;
+	}
+}
+.transition(@property : all, @time: .5s ) {
+	-webkit-transition: @property @time ease;
+	-moz-transition: @property @time ease;
+	-ms-transition: @property @time ease;
+	-o-transition: @property @time ease;
+	transition: @property @time ease;
+}
+.transitionProperty(@property) {
+	-webkit-transition-property: @property;
+	-moz-transition-property: @property;
+	-ms-transition-property: @property;
+	-o-transition-property: @property;
+	transition-property: @property;
+}
+.transform(@x:1.08, @y: 1.08) {
+	transform:scale(@x, @y);
+	-ms-transform:scale(@x, @y);
+	-webkit-transform:scale(@x, @y);
+}
+.center(@width: 1000px) {
+	width: @width;
+	margin: 0 auto;
+}
+.textHeight(@a) {
+	height: @a;
+	line-height: @a;
+}
+.textHeight(@a, @b) {
+	height: @a;
+	line-height: @b;
+}
+.float(@a: left) {
+	float: @a;
+	display: inline;
+}
+.absolute(@index: 10000, @left: 0px, @top: 0px, @right: auto, @bottom: auto) {
+	position: absolute;
+	z-index: @index;
+	left: @left;
+	top: @top;
+	right: @right;
+	bottom: @bottom;
+	zoom: 1;
+}
+.textellipsis(@height: 25px) {
+	.textHeight(@height);
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+/* Mixin End ======================================================= */
+
+// Images dir
+@img_global: "../images/";
+@img_all: "@{img_global}all.png";
+@img_icon: "@{img_global}icon.png";
+
+html, body, ul, li, ol, dl, dd, dt, p, h1, h2, h3, h4, h5, h6, form, fieldset, legend, img { margin:0; padding:0; }
+fieldset, img { border:none; }
+img { display: block; }
+address, caption, cite, code, dfn, th, var ,em{ font-style:normal;}
+ul, ol, li { list-style:none; }
+select, input { vertical-align:middle; }
+select, input, textarea { font-size:12px; margin:0; padding: 0px; }
+table { border-collapse:collapse; }
+html {padding: 0px;}
+body {background-color: #353f56; color:#777e89; padding:0px; font:14px/1.5 "Arial","Helvetica Neue",Helvetica,"Hiragino Sans GB","STHeiti","WenQuanYi Micro Hei","Microsoft Yahei",sans-serif; min-width: 1000px;-webkit-text-size-adjust:none;}
+
+::selection {
+    background: #353f56; 
+    color: #fff;
+}
+::-moz-selection {
+    background: #353f56; 
+    color: #fff;
+}
+::-webkit-selection {
+    background: #353f56; 
+    color: #fff;
+}
+
+.clearfix:after { content:"."; display:block; height:0; visibility:hidden; clear:both; }
+.clearfix { zoom:1; }
+.clearit { clear:both; height:0px; font-size:0; overflow:hidden;zoom:1; background:#fff; }
+
+select, input { vertical-align:middle; }
+select, input, textarea { font-size:14px; margin:0; font-family: "Microsoft Yahei", "SimSun"; }
+input[type="text"], input[type="password"], input[type="submit"], input[type="button"], textarea { outline-style:none;border-radius: 0px; -webkit-appearance:none; }
+textarea:focus, input[type="text"]:focus, input[type="password"]:focus, input[type="datetime"]:focus, input[type="datetime-local"]:focus, input[type="date"]:focus, input[type="month"]:focus, input[type="time"]:focus, input[type="week"]:focus, input[type="number"]:focus, input[type="email"]:focus, input[type="url"]:focus, input[type="search"]:focus, input[type="tel"]:focus, input[type="color"]:focus, .uneditable-input:focus, .formele .inp:focus {border-color: rgba(145, 194, 212, 0.8) !important;box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgba(145, 194, 212, 0.6);outline: 0 none;}
+textarea { resize:none; line-height: 24px;}
+p {
+	text-align: justify;
+	text-justify:inter-ideograph;
+	word-break:break-all;
+	word-wrap:break-word;
+}
+a {
+	.aTagStyle;
+	.transition;
+	.transitionProperty(~"color,background-color,border,opacity");
+}
+
+.hide {
+	display: none;
+	.absolute(1000, -99999px);
+	visibility: hidden;
+	overflow: hidden;
+}
+
+.no-mr {
+	margin-right: 0px !important;
+}
+
+.white-bg {
+	background-color: #fff !important;
+}
+
+.left {
+	.float();
+}
+.right {
+	.float(right);
+}
+
+// Buttons
+.button() {
+	.textHeight(40px);
+	text-align: center;
+	font-size: 16px;
+	color: #fff;
+	padding: 0 10px;
+	display: inline-block;
+	border-radius: 3px;
+	vertical-align: middle;
+	opacity: 0.8;
+	filter: alpha(opacity=80);
+}
+.blue-button {
+	.button();
+	background-color: #19b6de;
+	&:hover, &:focus, &:active {
+		color: #fff;
+		opacity: 1;
+		filter: alpha(opacity=100);
+	}
+}
+.red-button {
+	.button();
+	background-color: #f64500;
+	&:hover, &:focus, &:active {
+		color: #fff;
+		opacity: 1;
+		filter: alpha(opacity=100);
+	}
+}
+.grey-button {
+	.button();
+	background-color: #b1b1b1;
+	&:hover, &:focus, &:active {
+		color: #fff;
+		opacity: 1;
+		filter: alpha(opacity=100);
+	}
+}
+
+.arrow-button() {
+	width: 40px;
+	height: 40px;
+	border-radius: 3px;
+	background: #c7c7c7 url(@img_all) 0 0 no-repeat;
+	display: inline-block;
+	vertical-align: middle;
+	opacity: 0.8;
+	filter: alpha(opacity=80);
+}
+.up-button {
+	.arrow-button();
+	background-position: 0 -60px;
+	opacity: 1;
+	filter: alpha(opacity=100);
+}
+.down-button {
+	.arrow-button();
+	background-position: -41px -60px;
+	opacity: 1;
+	filter: alpha(opacity=100);
+}
+
+// Form elements
+input, input[type="text"], input[type="password"] {
+	.textHeight(32px);
+	border: 2px solid #e4e6e8;
+	padding: 0 5px;
+	width: 220px;
+	border-radius: 5px;
+}
+
+// Check box
+.j-checkbox {
+	width: 15px;
+	height: 17px;
+	display: inline-block;
+	background: url(@img_all) -58px 0px no-repeat;
+	vertical-align: middle;
+}
+.j-checkbox-selected {
+	background-position: -74px 0;
+	height: 17px;
+}

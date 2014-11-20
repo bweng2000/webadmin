@@ -20,13 +20,13 @@
 		<dispatcher>ERROR</dispatcher>
 	</filter-mapping>
 	
-	<listener>
-        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
-    </listener>
     <context-param>
         <param-name>contextConfigLocation</param-name>
         <param-value>classpath:applicationContext.xml</param-value>
     </context-param>
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
 	
 	<servlet>
 		<servlet-name>com.example.webadmin.ws.WebadminApplication</servlet-name>
@@ -35,5 +35,14 @@
 	<servlet-mapping>
 		<servlet-name>com.example.webadmin.ws.WebadminApplication</servlet-name>
 		<url-pattern>/adminrest/*</url-pattern>
+	</servlet-mapping>
+	
+	<servlet>
+		<servlet-name>com.example.musicplayer.ws.MusicplayerApplication</servlet-name>
+	</servlet>
+
+	<servlet-mapping>
+		<servlet-name>com.example.musicplayer.ws.MusicplayerApplication</servlet-name>
+		<url-pattern>/streamrest/*</url-pattern>
 	</servlet-mapping>
 </web-app>

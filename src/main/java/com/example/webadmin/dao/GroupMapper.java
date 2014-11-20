@@ -5,7 +5,7 @@ import java.sql.SQLException;
 
 import org.springframework.jdbc.core.RowMapper;
 
-import com.example.model.Music;
+import com.example.musicplayer.model.Music;
 import com.example.webadmin.model.Group;
 
 public class GroupMapper implements RowMapper<Group> {

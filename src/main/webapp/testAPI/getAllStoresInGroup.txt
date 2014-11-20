@@ -1,0 +1,17 @@
+[
+    {
+        "storeID": "12345",
+        "storeName": "长宁店",
+        "deviceID": 14230739172120
+    },
+    {
+        "storeID": "43209",
+        "storeName": "浦东一号店",
+        "deviceID": 279317396357982
+    },
+    {
+        "storeID": "C11019",
+        "storeName": "人民广场店",
+        "deviceID": 354659215
+    }
+]
