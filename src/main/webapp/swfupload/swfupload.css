@@ -1,0 +1,120 @@
+.progressWrapper {
+	width: 300px;
+	overflow: hidden;
+}
+
+.progressContainer {
+	border: solid 1px #E8E8E8;
+	background-color: #F7F7F7;
+	overflow: hidden;
+	padding-top: 4px;
+	padding-right: 4px;
+	padding-bottom: 4px;
+	padding-left: 4px;
+	margin-top: 5px;
+	margin-right: 5px;
+	margin-bottom: 5px;
+	margin-left: 0px;
+}
+/* Message */
+.message {
+	border: solid 1px #FFDD99;
+	background-color: #FFFFCC;
+	overflow: hidden;
+	margin-top: 1em;
+	margin-right: 0;
+	margin-bottom: 1em;
+	margin-left: 0;
+	padding-top: 10px;
+	padding-right: 20px;
+	padding-bottom: 10px;
+	padding-left: 10px;
+}
+/* Error */
+.red {
+	border: solid 1px #B50000;
+	background-color: #FFEBEB;
+}
+
+/* Current */
+.green {
+	border: solid 1px #DDF0DD;
+	background-color: #EBFFEB;
+}
+
+/* Complete */
+.blue {
+	border: solid 1px #CEE2F2;
+	background-color: #F0F5FF;
+}
+
+.progressName {
+	font-size: 8pt;
+	font-weight: 700;
+	color: #555;
+	width: 323px;
+	height: 14px;
+	text-align: left;
+	white-space: nowrap;
+	overflow: hidden;
+}
+
+.progressBarInProgress,
+.progressBarComplete,
+.progressBarError {
+	font-size: 0;
+	width: 0%;
+	height: 2px;
+	background-color: blue;
+	margin-top: 2px;
+}
+
+.progressBarComplete {
+	width: 100%;
+	background-color: green;
+	visibility: hidden;
+}
+
+.progressBarError {
+	width: 100%;
+	background-color: red;
+	visibility: hidden;
+}
+
+.progressBarStatus {
+	margin-top: 2px;
+	width: 337px;
+	font-size: 7pt;
+	font-family: Arial;
+	text-align: left;
+	white-space: nowrap;
+}
+
+a.progressCancel {
+	font-size: 0;
+	display: block;
+	height: 14px;
+	width: 14px;
+	background-image: url(../images/cancelbutton.gif);
+	background-repeat: no-repeat;
+	background-position: -14px 0px;
+	float: right;
+}
+
+a.progressCancel:hover {
+	background-position: 0px 0px;
+}
+#divStatus {
+	font-size: 12px;
+	color: #666;
+	line-height: 26px;
+	height: 26px;
+}
+#fsUploadProgress {
+	min-height: 29px;
+}
+.fup {
+	float: left;
+	line-height: 26px;
+	height: 26px;
+}

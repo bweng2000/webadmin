@@ -64,10 +64,15 @@
 	};
 
 	// Test api
+	// 
+	return false;
 	
-	/*var _baseUrl = "../../testAPI/";
+	var _baseUrl = "../../testAPI/";
 
 	this._Url = {
+		getAllMusics : _baseUrl + "getAllMusics.txt",
+		addAndRemoveMusics : _baseUrl + "addAndRemoveMusics.txt",
+
 		getAllGroups : _baseUrl + "groups.txt",
 		androidStatus : _baseUrl + "monitor.txt",
 
@@ -84,6 +89,6 @@
 		deleteGroups : _baseUrl + "deleteGroups.txt",
 		getUnAssignedStores : _baseUrl + "getUnAssignedStores.txt",
 		getAllStoresInGroup : _baseUrl + "getAllStoresInGroup.txt"
-	}*/
+	}
 
 }).call(this);

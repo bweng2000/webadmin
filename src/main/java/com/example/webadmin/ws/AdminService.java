@@ -51,7 +51,7 @@ public class AdminService {
 	//!This may be a problem in Windows since Windows 7 cannot resolve user.home system property!
 	private static final String HOME = System.getProperty("user.home");	//home directory on UNIX/Linux
 	
-	private static final String SERVER_UPLOAD_LOCATION = HOME + "/Music/";
+	private static final String SERVER_UPLOAD_LOCATION = HOME + File.separator + "Music" + File.separator;
 	private static final String headerValue = "application/json; charset=utf-8";
 	
 	@Autowired

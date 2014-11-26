@@ -280,11 +280,10 @@
 				$.ajax({
 	                type: 'POST',
 	                url: url,
-	                /*data: {
+	                data: {
 	                	storeName : arr,
 	                	groupName : _this.currentGroup
-	                },*/
-	                data: 'storeName=' + arr + '&groupName=' + _this.currentGroup,
+	                },
 	                contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
 	                dataType: "text",
 	                success: function(data) {
@@ -368,8 +367,8 @@
                             	// TODO
                             	// 添加分组成功后，如果与当前分类标准相同，是否需要立即添加到当前页面
                             	// 
-                            	//
-                           		it.hide();
+                            	// 
+                                it.hide();
                             },
                             error : function(xhr, error, msg) {
                                 alert(xhr.responseText);
