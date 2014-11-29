@@ -28,6 +28,8 @@ import javax.ws.rs.core.Response.Status;
 
 import org.glassfish.jersey.media.multipart.FormDataContentDisposition;
 import org.glassfish.jersey.media.multipart.FormDataParam;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.DataAccessException;
@@ -53,6 +55,8 @@ public class AdminService {
 	
 	private static final String SERVER_UPLOAD_LOCATION = HOME + File.separator + "Music" + File.separator;
 	private static final String headerValue = "application/json; charset=utf-8";
+	
+	final static Logger logger = LoggerFactory.getLogger(AdminService.class);
 	
 	@Autowired
 	private PlaylistDao playlistDao;
@@ -88,6 +92,7 @@ public class AdminService {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getAllMusic() {
 		List<Music> playlist = playlistDao.getAllMusic();
+		logger.info("The first music name: " + playlist.get(0).getName());
 		return Response.ok(playlist).header("Content-Type", headerValue).build();
 	}
 	
