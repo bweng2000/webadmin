@@ -281,9 +281,10 @@
 	                type: 'POST',
 	                url: url,
 	                data: {
-	                	storeName : arr,
+	                	storeName : arr.toString(),
 	                	groupName : _this.currentGroup
 	                },
+	                //data: 'storeName=' + arr + '&groupName=' + _this.currentGroup,	//either way is OK. But the above using object is preferred.
 	                contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
 	                dataType: "text",
 	                success: function(data) {
