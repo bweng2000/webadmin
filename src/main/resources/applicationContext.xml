@@ -45,5 +45,5 @@
 	<bean id="adminService" class="com.example.webadmin.ws.AdminService"/>
 	
 	<bean id="storeGroupService" class="com.example.webadmin.ws.StoreGroupService"/>
-
+	
 </beans>
